@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Analytics</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href='//fonts.googleapis.com/css?family=Open+Sans:700,400,300' rel='stylesheet'>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/assets/css/c3.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <style>
+    body {
+        padding-top: 70px;
+        /* Required padding for .navbar-fixed-top. Remove if using .navbar-static-top. Change if height of navigation changes. */
+        font-family: 'Open Sans', sans-serif;
+    }
+    .Banner-auth {
+        vertical-align: middle;
+        margin-top: 10px;
+    }
+    .active-users {
+        font-size: 48px;
+    }
+    </style>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Analytics</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <div class="Banner-auth pull-right" id="auth"></div>
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#"></a>
+                    </li>
+                    <li>
+                        <a href="#"></a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12 text-center">
+            </div>
+        </div>
+        <!-- /.row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div class="well">
+                    <div class="Component Viewpicker" id="viewpicker"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                  Traffic
+                </div>
+                <div class="panel-body">
+                  <div id="trafficthisyear"></div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  Traffic by Source
+                </div>
+                <div class="panel-body">
+                  <div id="sourcedounut"></div>
+                </div>
+              </div>
+            </div>
+           <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  Top Browsers
+                </div>
+                <div class="panel-body">
+                  <div id="browsersdounut"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row"> 
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  Social Netork Traffic
+                </div>
+                <div class="panel-body">
+                  <div id="socialdounut"></div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+            </div>  
+        </div>
+    </div>
+    <!-- /.container -->
+
+<!-- jQuery Version 1.11.0 -->
+<script src="/assets/js/jquery-1.11.0.js"></script>
+<!-- Bootstrap Core JavaScript -->
+<script src="/assets/js/bootstrap.min.js"></script>
+<!-- Google API -->
+<script>
+(function(w,d,s,g,js,fjs){
+  g=w.gapi||(w.gapi={});g.analytics={q:[],ready:function(cb){this.q.push(cb)}};
+  js=d.createElement(s);fjs=d.getElementsByTagName(s)[0];
+  js.src='https://apis.google.com/js/platform.js';
+  fjs.parentNode.insertBefore(js,fjs);js.onload=function(){g.load('analytics')};
+}(window,document,'script'));
+</script>
+<!-- This demo uses the viewpicker component, which uses JavaScript promises.
+The promise.js script below polyfills promises in older browsers that don't
+support them. -->
+<script src="assets/js/promise.js"></script>
+<script src="assets/js/moment.js"></script>
+<script src="components/bootstrap-viewpicker.js"></script>
+<script src="components/active-users.js"></script>
+<script src="/assets/js/d3.min.js"></script>
+<script src="/assets/js/c3.min.js"></script>
+
+<!-- Example c3 donut -->
+<script type="text/javascript">
+    var chart = c3.generate({
+        bindto: '#browsersdounu',
+        data: {
+            columns: [
+                ['data1', 30],
+                ['data2', 120],
+            ],
+            type : 'donut',
+        },
+        donut: {
+            title: "c3 Donut"
+        }
+    });
+</script>
+<!--Auth and View / Active Users -->
+
+<script type="text/javascript">
+gapi.analytics.ready(function() {
+
+  /**
+   * Authorize this user.
+   */
+  gapi.analytics.auth.authorize({
+    container: 'auth',
+    clientid: '623325626209-j1jm9d78ge0v4uf8b9cor31qsirungrq.apps.googleusercontent.com',
+  });
+
+  /**
+   * Add a callback to add the `is-authorized` class to the body
+   * as soon as authorization is successful. This is used to help
+   * style components.
+   */
+  gapi.analytics.auth.on('success', function() {
+    document.body.classList.add('is-authorized');
+    viewpicker.execute();
+  });
+
+  /**
+   * Create a new Viewpicker instance to be rendered inside of an
+   * element with the id "viewpicker".
+   */
+  var viewpicker = new gapi.analytics.ext.Viewpicker({
+    container: 'viewpicker'
+  });
+
+  /**
+   * Create a new ActiveUsers instance to be rendered inside of an
+   * element with the id "active-users" and poll for changes every
+   * five seconds.
+   */
+  var activeUsers = new gapi.analytics.ext.ActiveUsers({
+    container: 'active-users',
+    pollingInterval: 5
+  });
+
+  /**
+   * This code adds/removes HTML classes to trigger CSS animations
+   * when the active user counts go up or down.
+   */
+
+  /**
+   * Update all of the components if the users changes the view.
+   */
+  viewpicker.on('change', function(data) {
+    drawTrafficCurrentYear(data.ids);
+    drawBrowserStats(data.ids);
+    drawSourceStats(data.ids);
+    drawSocialStats(data.ids);
+  });
+});
+
+/**
+ * Execute a Google Analytics Core Reporting API query
+ * and return a promise.
+ * @param {Object} params The request parameters.
+ * @return {Promise} A promise.
+ */
+function query(params) {
+  return new Promise(function(resolve, reject) {
+    var data = new gapi.analytics.report.Data({query: params});
+    data.once('success', function(response) { resolve(response); })
+        .once('error', function(response) { reject(response); })
+        .execute();
+  });
+}
+
+
+//Browser Stats Donut Chart
+function drawBrowserStats(ids) {
+  var browserdata = [];
+  query({
+    'ids': ids,
+    'dimensions': 'ga:browser',
+    'metrics': 'ga:sessions',
+    'sort': '-ga:sessions',
+    'max-results': 5
+  })
+  .then(function(response) {
+    response.rows.forEach(function(row) {
+      browserdata.push([row[0], Number(row[1])]);
+    });
+  });
+  var chart = c3.generate({
+    bindto: '#browsersdounut',
+    data: {
+        columns: [],
+        type : 'donut',
+      },
+      donut: {
+        title: "Browsers"
+      }
+  });
+
+  setTimeout(function () {
+    chart.load({
+        columns: browserdata
+      });
+  }, 1000);
+}    
+
+//Traffic By Source Donut
+function drawSourceStats(ids) {
+  var sourcedata = [];
+  query({
+    'ids': ids,
+    'dimensions': 'ga:Medium',
+    'metrics': 'ga:sessions',
+    'sort': '-ga:sessions',
+    'max-results': 5
+  })
+  .then(function(response) {
+    response.rows.forEach(function(row) {
+      sourcedata.push([row[0], Number(row[1])]);
+    });
+  });
+
+  var chart = c3.generate({
+    bindto: '#sourcedounut',
+    data: {
+        columns: [],
+        type : 'donut',
+      },
+      donut: {
+        title: "Traffic Source"
+      }
+  });
+
+  setTimeout(function () {
+    chart.load({
+        columns: sourcedata
+      });
+  }, 1000);
+}
+// Social network stats
+function drawSocialStats(ids) {
+  var socialdata = [];
+  query({
+    'ids': ids,
+    'dimensions': 'ga:socialNetwork',
+    'metrics': 'ga:sessions',
+    'sort': '-ga:sessions',
+    'max-results': 5
+  })
+  .then(function(response) {
+    response.rows.forEach(function(row) {
+      socialdata.push([row[0], Number(row[1])]);
+    });
+  });
+
+  var chart = c3.generate({
+    bindto: '#socialdounut',
+    data: {
+        columns: [],
+        type : 'donut',
+      },
+      donut: {
+        title: "Traffic Source"
+      }
+  });
+  setTimeout(function () {
+    chart.load({
+
+        columns: socialdata
+      });
+  }, 1000);
+  
+}
+
+// Sessions this month
+function drawTrafficCurrentYear(ids) {
+  var now = moment()
+  var thisyeardata = [];
+  var yeardata = [];
+  var monthdata = ['Month'];
+  var thisYear = query({
+    'ids': ids,
+    'dimensions': 'ga:month,ga:nthMonth',
+    'metrics': 'ga:sessions',
+    'start-date': moment(now).subtract('year', 1).day(0).format('YYYY-MM-DD'),
+    'end-date': moment(now).format('YYYY-MM-DD')
+  });
+
+
+//  var lastYear = query({
+//    'ids': ids,
+//    'dimensions': 'ga:month,ga:nthMonth',
+//    'metrics': 'ga:sessions',
+//    'start-date': moment().subtract('year',1).month(0).format('YYYY-MM-DD'),
+//    'end-date': moment().month(0).subtract('day',1).format('YYYY-MM-DD'),
+//  });
+
+  Promise.all([thisYear]).then(function(results) {
+    
+    thisyeardata = ['This Year'].concat(results[0].rows.map(function(row) { return +row[2]; }));
+//    lastyeardata = ['Last Year'].concat(results[1].rows.map(function(row) { return +row[2]; }));
+      var startdatedata = moment(results[0]['query']['start-date']);
+      var enddatedata = moment(results[0]['query']['end-date']);
+      while (startdatedata<enddatedata) {
+          monthdata.push(startdatedata.format('YYYY-MM-DD'));
+          startdatedata = startdatedata.add(1,'month');
+      }
+    });
+
+
+var chart = c3.generate({
+    bindto: '#trafficthisyear',
+    data: {
+        x: 'Month',
+        columns: [
+        ],
+         type: 'area'
+    },
+    axis: {
+        x: {
+            type: 'timeseries',
+            tick: {
+                format: '%b'
+            }
+        }
+    }
+  });
+  setTimeout(function () {
+    chart.load({
+
+        columns: 
+          [ 
+            monthdata, thisyeardata
+          ]
+      });
+  }, 1000);
+}
+
+</script>
+</body>
+</html>
